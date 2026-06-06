@@ -38,19 +38,34 @@ model Vendor {
   // Relations
   quotations     Quotation[]
   purchaseOrders PurchaseOrder[]
+  rfqs           RFQ[]
 }
 
 model RFQ {
   id          String   @id @default(uuid())
   title       String
-  description String
-  quantity    Int
+  category    String   @default("General")
+  description String   @db.Text
   deadline    DateTime
   status      String   @default("Open")
+  attachments String?  @db.Text
   createdAt   DateTime @default(now())
 
   // Relations
   quotations Quotation[]
+  lineItems  RFQLineItem[]
+  vendors    Vendor[]
+}
+
+model RFQLineItem {
+  id       String @id @default(uuid())
+  item     String
+  qty      Int
+  unit     String
+  rfqId    String
+
+  // Relations
+  rfq      RFQ    @relation(fields: [rfqId], references: [id], onDelete: Cascade)
 }
 
 model Quotation {
