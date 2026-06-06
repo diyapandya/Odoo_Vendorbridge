@@ -5,9 +5,20 @@ import { db } from "@/lib/db";
 import { generateVerificationToken, generatePasswordResetToken } from "@/lib/tokens";
 import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/mail";
 
-export const registerUser = async (data: any) => {
+import { promises as fs } from "fs";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
+
+export const registerUser = async (formData: FormData) => {
   try {
-    const { email, password, firstName, lastName, phone, role, country } = data;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const firstName = formData.get("firstName") as string;
+    const lastName = formData.get("lastName") as string;
+    const phone = formData.get("phone") as string;
+    const role = formData.get("role") as string;
+    const country = formData.get("country") as string;
+    const profilePicFile = formData.get("profilePic") as File | null;
 
     if (!email || !password || !firstName || !lastName) {
       return { error: "Missing required fields" };
@@ -21,6 +32,27 @@ export const registerUser = async (data: any) => {
       return { error: "Email already in use" };
     }
 
+    let profilePicPath: string | null = null;
+
+    if (profilePicFile && profilePicFile.size > 0) {
+      const arrayBuffer = await profilePicFile.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Create uploads directory if it doesn't exist
+      const uploadDir = path.join(process.cwd(), "public", "uploads", "profile_pics");
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      // Generate unique filename preserving extension
+      const extension = profilePicFile.name.split('.').pop() || "png";
+      const filename = `${uuidv4()}.${extension}`;
+      const filePath = path.join(uploadDir, filename);
+
+      await fs.writeFile(filePath, buffer);
+      
+      // Store relative path for URL access
+      profilePicPath = `/uploads/profile_pics/${filename}`;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await db.user.create({
@@ -32,6 +64,7 @@ export const registerUser = async (data: any) => {
         phone: phone || "",
         role: role || "Vendor",
         country: country || "Unknown",
+        profilePic: profilePicPath
       }
     });
 

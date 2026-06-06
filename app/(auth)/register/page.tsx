@@ -18,9 +18,8 @@ export default function RegisterPage() {
     setSuccess("");
 
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData.entries());
 
-    const result = await registerUser(data);
+    const result = await registerUser(formData);
 
     if (result.error) {
       setError(result.error);
@@ -41,7 +40,7 @@ export default function RegisterPage() {
             Create an account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="space-y-4 rounded-md shadow-sm">
             <div className="flex gap-4">
               <div className="w-1/2">
@@ -64,6 +63,19 @@ export default function RegisterPage() {
             <div>
               <label htmlFor="country" className="sr-only">Country</label>
               <input id="country" name="country" type="text" required className="relative block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Country" />
+            </div>
+            <div>
+              <label htmlFor="role" className="sr-only">Role</label>
+              <select id="role" name="role" required className="relative block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                <option value="" disabled selected>Select Role</option>
+                <option value="Vendor">Vendor</option>
+                <option value="Buyer">Buyer</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="profilePic" className="block text-sm font-medium text-gray-700 mb-1">Profile Picture (Optional)</label>
+              <input id="profilePic" name="profilePic" type="file" accept="image/*" className="relative block w-full rounded-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">Password</label>
