@@ -8,8 +8,8 @@ generator client {
 }
 
 model User {
-  id             String   @id @default(uuid())
-  email          String   @unique
+  id             String    @id @default(uuid())
+  email          String    @unique
   password       String
   firstName      String
   lastName       String
@@ -18,7 +18,11 @@ model User {
   country        String
   profilePic     String?
   additionalInfo String?
-  createdAt      DateTime @default(now())
+  emailVerified  DateTime?
+  createdAt      DateTime  @default(now())
+
+  // Relations
+  approvals Approval[]
 }
 
 model Vendor {
@@ -30,6 +34,10 @@ model Vendor {
   category    String
   status      String   @default("Active")
   createdAt   DateTime @default(now())
+
+  // Relations
+  quotations     Quotation[]
+  purchaseOrders PurchaseOrder[]
 }
 
 model RFQ {
@@ -40,43 +48,88 @@ model RFQ {
   deadline    DateTime
   status      String   @default("Open")
   createdAt   DateTime @default(now())
+
+  // Relations
+  quotations Quotation[]
 }
 
 model Quotation {
   id          String   @id @default(uuid())
-  rfqId       String
-  vendorId    String
   price       Decimal
   deliveryETA String
   remarks     String?
   status      String   @default("Pending")
   createdAt   DateTime @default(now())
+
+  // Foreign Keys
+  rfqId    String
+  vendorId String
+
+  // Relations
+  rfq            RFQ             @relation(fields: [rfqId], references: [id])
+  vendor         Vendor          @relation(fields: [vendorId], references: [id])
+  purchaseOrders PurchaseOrder[]
 }
 
 model Approval {
-  id          String   @id @default(uuid())
-  entityId    String
-  entityType  String
-  approverId  String
-  status      String
-  remarks     String?
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  entityId   String   // Can point to RFQ, Quotation, etc.
+  entityType String
+  status     String
+  remarks    String?
+  createdAt  DateTime @default(now())
+
+  // Foreign Keys
+  approverId String
+
+  // Relations
+  approver User @relation(fields: [approverId], references: [id])
 }
 
 model PurchaseOrder {
   poNumber    String   @id
-  quotationId String
-  vendorId    String
   totalAmount Decimal
   status      String   @default("Pending")
   createdAt   DateTime @default(now())
+
+  // Foreign Keys
+  quotationId String
+  vendorId    String
+
+  // Relations
+  quotation Quotation @relation(fields: [quotationId], references: [id])
+  vendor    Vendor    @relation(fields: [vendorId], references: [id])
+  invoices  Invoice[]
 }
 
 model Invoice {
   invoiceNumber String   @id
-  poNumber      String
   taxAmount     Decimal
   totalAmount   Decimal
   paymentStatus String   @default("Unpaid")
   createdAt     DateTime @default(now())
+
+  // Foreign Keys
+  poNumber String
+
+  // Relations
+  purchaseOrder PurchaseOrder @relation(fields: [poNumber], references: [poNumber])
+}
+
+model VerificationToken {
+  id      String   @id @default(uuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(uuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
 }

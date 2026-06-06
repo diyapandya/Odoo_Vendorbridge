@@ -6,7 +6,8 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Define public routes
-  const isPublicRoute = path === '/login' || path === '/register';
+  const publicRoutes = ['/login', '/register', '/verify-email', '/forgot-password', '/new-password'];
+  const isPublicRoute = publicRoutes.includes(path);
 
   if (!token && !isPublicRoute) {
     return NextResponse.redirect(new URL('/login', request.url));

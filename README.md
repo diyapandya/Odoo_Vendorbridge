@@ -12,3 +12,4 @@ Procurement & Vendor Management ERP built using Next.js 14 App Router.
 1. Install dependencies: `npm install`
 2. Setup environment variables: `cp .env.example .env`
 3. Run the development server: `npm run dev`
+4. Initialization of database: `npx prisma db push`
