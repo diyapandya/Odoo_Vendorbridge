@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: 'Procurement & Vendor Management ERP',
 };
 
+import AuthProvider from '@/components/AuthProvider';
+
 export default function RootLayout({
   children,
 }: {
@@ -13,7 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }
