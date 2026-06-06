@@ -10,15 +10,14 @@ export function Navbar({ user }: NavbarProps) {
   const imageUrl = user?.image;
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm z-10 shrink-0">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm z-50 shrink-0">
       <h1 className="text-xl font-semibold text-slate-800">VendorBridge</h1>
-
 
       <div className="flex items-center gap-3">
         {imageUrl ? (
-          <img 
-            src={imageUrl} 
-            alt={user?.name || "User profile"} 
+          <img
+            src={imageUrl}
+            alt={user?.name || "User profile"}
             className="w-10 h-10 rounded-full border border-slate-200 object-cover"
           />
         ) : (
