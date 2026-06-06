@@ -1,0 +1,78 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  phone     String
+  role      String
+  country   String
+  createdAt DateTime @default(now())
+}
+
+model Vendor {
+  id          String   @id @default(uuid())
+  companyName String
+  gstNumber   String
+  email       String   @unique
+  phone       String
+  category    String
+  status      String   @default("Active")
+  createdAt   DateTime @default(now())
+}
+
+model RFQ {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  quantity    Int
+  deadline    DateTime
+  status      String   @default("Open")
+  createdAt   DateTime @default(now())
+}
+
+model Quotation {
+  id          String   @id @default(uuid())
+  rfqId       String
+  vendorId    String
+  price       Decimal
+  deliveryETA String
+  remarks     String?
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+}
+
+model Approval {
+  id          String   @id @default(uuid())
+  entityId    String
+  entityType  String
+  approverId  String
+  status      String
+  remarks     String?
+  createdAt   DateTime @default(now())
+}
+
+model PurchaseOrder {
+  poNumber    String   @id
+  quotationId String
+  vendorId    String
+  totalAmount Decimal
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+}
+
+model Invoice {
+  invoiceNumber String   @id
+  poNumber      String
+  taxAmount     Decimal
+  totalAmount   Decimal
+  paymentStatus String   @default("Unpaid")
+  createdAt     DateTime @default(now())
+}
