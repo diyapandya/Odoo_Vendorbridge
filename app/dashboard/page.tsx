@@ -48,6 +48,8 @@ export default async function DashboardPage() {
         { poNumber: "PO-1002", vendor: { companyName: "OfficeSupplies Inc" }, totalAmount: 1200, status: "Pending" },
       ]
     };
-    return <AdminDashboard data={adminData} />;
+    return (
+    <AdminDashboard data={adminData} />
+  );
   }
 }

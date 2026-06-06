@@ -108,6 +108,20 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
           </div>
         </div>
       </div>
+
+      <div className="flex gap-4">
+        <button className="px-5 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-100">
+          + New RFQ
+        </button>
+
+        <button className="px-5 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-100">
+          Add Vendor
+        </button>
+
+        <button className="px-5 py-2 bg-white border border-slate-300 rounded-lg hover:bg-slate-100">
+          View Invoices
+        </button>
+      </div>
     </div>
   );
 }
