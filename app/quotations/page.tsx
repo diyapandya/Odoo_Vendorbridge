@@ -12,11 +12,28 @@ export default async function QuotationsPage() {
   }
 
   const role = (session.user as any).role;
-  const userId = (session.user as any).id;
+  const userEmail = session.user.email;
+  
+  if (!userEmail) {
+    redirect("/login");
+  }
+
+  let vendorId: string | undefined = undefined;
   const isAdmin = role !== "Vendor";
+  
+  if (!isAdmin) {
+    const vendor = await db.vendor.findUnique({
+      where: { email: userEmail }
+    });
+    
+    if (!vendor) {
+      redirect("/dashboard");
+    }
+    vendorId = vendor.id;
+  }
 
   const quotations = await db.quotation.findMany({
-    where: isAdmin ? undefined : { vendorId: userId },
+    where: isAdmin ? undefined : { vendorId: vendorId },
     orderBy: { createdAt: 'desc' },
     include: {
       rfq: true,

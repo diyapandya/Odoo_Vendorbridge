@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
+import { db } from "@/lib/db";
+
 export default async function PurchaseOrdersPage() {
   const session = await getServerSession(authOptions);
   
@@ -12,12 +14,29 @@ export default async function PurchaseOrdersPage() {
   }
 
   const role = (session.user as any).role;
-  const userId = (session.user as any).id;
+  const userEmail = session.user.email;
   const isAdmin = role !== "Vendor";
+
+  if (!userEmail) {
+    redirect("/login");
+  }
+
+  let vendorId: string | undefined = undefined;
+  
+  if (!isAdmin) {
+    const vendor = await db.vendor.findUnique({
+      where: { email: userEmail }
+    });
+    
+    if (!vendor) {
+      redirect("/dashboard");
+    }
+    vendorId = vendor.id;
+  }
 
   const purchaseOrders = isAdmin 
     ? await PoService.getAllPOs()
-    : await PoService.getPOsByVendor(userId);
+    : await PoService.getPOsByVendor(vendorId!);
 
   return (
     <div className="p-8 space-y-6">

@@ -4,6 +4,8 @@ import { SubmitQuotationForm } from "./_components/SubmitQuotationForm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth"; // Assuming authOptions exists or similar
 
+import { db } from "@/lib/db";
+
 export default async function NewQuotationPage({ params }: { params: { rfqId: string } }) {
   const session = await getServerSession(authOptions);
   
@@ -12,12 +14,27 @@ export default async function NewQuotationPage({ params }: { params: { rfqId: st
   }
 
   const role = (session.user as any).role;
-  const vendorId = (session.user as any).id;
+  const userEmail = session.user.email;
+  
+  if (!userEmail) {
+    redirect("/login");
+  }
 
   if (role !== "Vendor") {
     // Only vendors can submit quotations
     redirect("/dashboard");
   }
+
+  const vendor = await db.vendor.findUnique({
+    where: { email: userEmail }
+  });
+
+  if (!vendor) {
+    // Vendor profile not set up or missing
+    redirect("/dashboard");
+  }
+
+  const vendorId = vendor.id;
 
   const rfq = await RFQService.getRFQById(params.rfqId);
 

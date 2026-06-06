@@ -4,6 +4,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { markInvoicePaidAction } from "./actions";
 
+import { db } from "@/lib/db";
+
 export default async function InvoicesPage() {
   const session = await getServerSession(authOptions);
   
@@ -12,12 +14,29 @@ export default async function InvoicesPage() {
   }
 
   const role = (session.user as any).role;
-  const userId = (session.user as any).id;
+  const userEmail = session.user.email;
   const isAdmin = role !== "Vendor";
+
+  if (!userEmail) {
+    redirect("/login");
+  }
+
+  let vendorId: string | undefined = undefined;
+  
+  if (!isAdmin) {
+    const vendor = await db.vendor.findUnique({
+      where: { email: userEmail }
+    });
+    
+    if (!vendor) {
+      redirect("/dashboard");
+    }
+    vendorId = vendor.id;
+  }
 
   const invoices = isAdmin 
     ? await InvoiceService.getAllInvoices()
-    : await InvoiceService.getInvoicesByVendor(userId);
+    : await InvoiceService.getInvoicesByVendor(vendorId!);
 
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto">

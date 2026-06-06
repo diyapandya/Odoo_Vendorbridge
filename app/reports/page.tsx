@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
+import { db } from "@/lib/db";
+
 export default async function ReportsPage() {
   const session = await getServerSession(authOptions);
   
@@ -11,11 +13,28 @@ export default async function ReportsPage() {
   }
 
   const role = (session.user as any).role;
-  const userId = (session.user as any).id;
+  const userEmail = session.user.email;
   const isAdmin = role !== "Vendor";
 
+  if (!userEmail) {
+    redirect("/login");
+  }
+
+  let vendorId: string | undefined = undefined;
+  
+  if (!isAdmin) {
+    const vendor = await db.vendor.findUnique({
+      where: { email: userEmail }
+    });
+    
+    if (!vendor) {
+      redirect("/dashboard");
+    }
+    vendorId = vendor.id;
+  }
+
   const adminStats = isAdmin ? await AnalyticsService.getAdminDashboardStats() : null;
-  const vendorStats = !isAdmin ? await AnalyticsService.getVendorDashboardStats(userId) : null;
+  const vendorStats = !isAdmin ? await AnalyticsService.getVendorDashboardStats(vendorId!) : null;
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto font-sans">
