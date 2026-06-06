@@ -20,20 +20,8 @@ interface AdminDashboardProps {
       totalPOAmount: number;
     };
     recentPOs: any[];
-  };
-}
-
-// Dummy data for the chart since we don't have historical data aggregated in DB yet
-const mockChartData = [
-  { name: "Jan", amount: 4000 },
-  { name: "Feb", amount: 3000 },
-  { name: "Mar", amount: 2000 },
-  { name: "Apr", amount: 2780 },
-  { name: "May", amount: 1890 },
-  { name: "Jun", amount: 2390 },
-];
     chartData: { name: string; amount: number; }[];
-  }
+  };
 }
 
 export function AdminDashboard({ data }: AdminDashboardProps) {

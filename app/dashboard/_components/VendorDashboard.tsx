@@ -22,18 +22,8 @@ interface VendorDashboardProps {
       pendingRFQs: number;
     } | null;
     recentRFQs: any[];
-  };
-}
-
-// Dummy data for quotation trends
-const mockChartData = [
-  { name: "W1", bids: 2 },
-  { name: "W2", bids: 5 },
-  { name: "W3", bids: 3 },
-  { name: "W4", bids: 8 },
-];
     chartData: { name: string; bids: number; }[];
-  }
+  };
 }
 
 export function VendorDashboard({ data }: VendorDashboardProps) {

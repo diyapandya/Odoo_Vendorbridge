@@ -23,7 +23,6 @@ export function VendorClient({ initialVendors }: { initialVendors: Vendor[] }) {
   const [formCategory, setFormCategory] = useState("Hardware & Electronics");
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const STANDARD_CATEGORIES = [
     "Hardware & Electronics",
@@ -45,7 +44,7 @@ export function VendorClient({ initialVendors }: { initialVendors: Vendor[] }) {
       }
     }
 
-    const res = const res = await addVendorAction(formData);
+    const res = await addVendorAction(formData);
     setLoading(false);
 
     if (res.error) {
