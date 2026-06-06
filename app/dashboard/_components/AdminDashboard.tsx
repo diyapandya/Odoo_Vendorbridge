@@ -20,18 +20,9 @@ interface AdminDashboardProps {
       totalPOAmount: number;
     };
     recentPOs: any[];
+    chartData: { name: string; amount: number; }[];
   }
 }
-
-// Dummy data for the chart since we don't have historical data aggregated in DB yet
-const mockChartData = [
-  { name: 'Jan', amount: 4000 },
-  { name: 'Feb', amount: 3000 },
-  { name: 'Mar', amount: 2000 },
-  { name: 'Apr', amount: 2780 },
-  { name: 'May', amount: 1890 },
-  { name: 'Jun', amount: 2390 },
-];
 
 export function AdminDashboard({ data }: AdminDashboardProps) {
   const formatCurrency = (val: number) => 
@@ -94,10 +85,10 @@ export function AdminDashboard({ data }: AdminDashboardProps) {
         
         {/* Spending Trends Chart */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-100">
-          <h2 className="text-lg font-semibold mb-4 text-slate-900">Spending Trends (Mock)</h2>
+          <h2 className="text-lg font-semibold mb-4 text-slate-900">Spending Trends</h2>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mockChartData}>
+              <BarChart data={data.chartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} tickFormatter={(val) => `$${val}`} />

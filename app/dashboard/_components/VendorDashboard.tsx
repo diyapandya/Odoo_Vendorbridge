@@ -22,16 +22,9 @@ interface VendorDashboardProps {
       pendingRFQs: number;
     } | null;
     recentRFQs: any[];
+    chartData: { name: string; bids: number; }[];
   }
 }
-
-// Dummy data for quotation trends
-const mockChartData = [
-  { name: 'W1', bids: 2 },
-  { name: 'W2', bids: 5 },
-  { name: 'W3', bids: 3 },
-  { name: 'W4', bids: 8 },
-];
 
 export function VendorDashboard({ data }: VendorDashboardProps) {
   const [error, setError] = useState<string | null>(null);
@@ -187,10 +180,10 @@ export function VendorDashboard({ data }: VendorDashboardProps) {
         
         {/* Bidding Trends Chart */}
         <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-100">
-          <h2 className="text-lg font-semibold mb-4 text-slate-900">Bidding Activity (Mock)</h2>
+          <h2 className="text-lg font-semibold mb-4 text-slate-900">Bidding Activity</h2>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={mockChartData}>
+              <LineChart data={data.chartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />

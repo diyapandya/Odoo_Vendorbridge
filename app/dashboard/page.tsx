@@ -5,6 +5,8 @@ import { AdminDashboard } from "./_components/AdminDashboard";
 import { VendorDashboard } from "./_components/VendorDashboard";
 import { UserService } from "@/lib/services/user.service";
 
+import { DashboardService } from "@/lib/services/dashboard.service";
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
@@ -17,39 +19,16 @@ export default async function DashboardPage() {
   const user = await UserService.getUserById((session.user as any).id);
 
   if (isVendor) {
-    // A vendor setup is considered complete if they have phone and country set
-    const isVendorSetupComplete = user?.phone ? true : false;
-
-    // Mock data for vendor
-    const vendorData = {
-      isVendorSetupComplete,
-      kpis: {
-        myQuotations: 5,
-        awardedPOs: 2,
-        pendingRFQs: 12,
-      },
-      recentRFQs: [
-        { id: "1", title: "Office Servers", quantity: 3, deadline: "2026-06-30", status: "Open" },
-        { id: "2", title: "Laptops Q3", quantity: 50, deadline: "2026-07-15", status: "Open" },
-      ]
-    };
+    const vendorData = await DashboardService.getVendorDashboardData((session.user as any).email);
+    // Merge user phone check for setup completion
+    const isVendorSetupComplete = vendorData.isVendorSetupComplete && (user?.phone ? true : false);
+    vendorData.isVendorSetupComplete = isVendorSetupComplete;
+    
     return <VendorDashboard data={vendorData} />;
   } else {
-    // Mock data for Admin/Buyer
-    const adminData = {
-      kpis: {
-        totalVendors: 42,
-        openRFQs: 15,
-        pendingApprovals: 8,
-        totalPOAmount: 150000,
-      },
-      recentPOs: [
-        { poNumber: "PO-1001", vendor: { companyName: "TechCorp" }, totalAmount: 45000, status: "Approved" },
-        { poNumber: "PO-1002", vendor: { companyName: "OfficeSupplies Inc" }, totalAmount: 1200, status: "Pending" },
-      ]
-    };
+    const adminData = await DashboardService.getAdminDashboardData();
     return (
-    <AdminDashboard data={adminData} />
-  );
+      <AdminDashboard data={adminData} />
+    );
   }
 }

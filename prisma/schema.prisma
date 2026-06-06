@@ -66,13 +66,18 @@ model RFQLineItem {
 
   // Relations
   rfq      RFQ    @relation(fields: [rfqId], references: [id], onDelete: Cascade)
+  quotationItems QuotationLineItem[]
 }
 
 model Quotation {
   id          String   @id @default(uuid())
-  price       Decimal
+  price       Decimal  // Legacy total price
+  subtotal    Decimal?
+  taxPercent  Decimal?
+  totalAmount Decimal?
   deliveryETA String
   remarks     String?
+  terms       String?  @db.Text
   status      String   @default("Pending")
   createdAt   DateTime @default(now())
 
@@ -84,6 +89,22 @@ model Quotation {
   rfq            RFQ             @relation(fields: [rfqId], references: [id])
   vendor         Vendor          @relation(fields: [vendorId], references: [id])
   purchaseOrders PurchaseOrder[]
+  lineItems      QuotationLineItem[]
+}
+
+model QuotationLineItem {
+  id          String   @id @default(uuid())
+  unitPrice   Decimal
+  totalPrice  Decimal
+  deliveryETA Int?
+  
+  // Foreign Keys
+  quotationId String
+  rfqItemId   String
+  
+  // Relations
+  quotation   Quotation   @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  rfqItem     RFQLineItem @relation(fields: [rfqItemId], references: [id])
 }
 
 model Approval {

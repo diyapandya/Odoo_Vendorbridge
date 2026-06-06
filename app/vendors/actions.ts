@@ -20,8 +20,11 @@ export async function addVendorAction(formData: FormData) {
     await VendorService.createVendor(data);
     revalidatePath("/vendors");
     return { success: true };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error adding vendor:", error);
+    if (error.code === 'P2002' && error.meta?.target === 'Vendor_email_key') {
+      return { error: "A vendor with this email already exists." };
+    }
     return { error: "Failed to add vendor" };
   }
 }

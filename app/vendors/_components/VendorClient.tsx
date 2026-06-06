@@ -22,6 +22,7 @@ export function VendorClient({ initialVendors }: { initialVendors: Vendor[] }) {
   const [loading, setLoading] = useState(false);
   const [formCategory, setFormCategory] = useState("Hardware & Electronics");
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const STANDARD_CATEGORIES = [
     "Hardware & Electronics",
@@ -43,10 +44,16 @@ export function VendorClient({ initialVendors }: { initialVendors: Vendor[] }) {
       }
     }
     
-    await addVendorAction(formData);
+    const res = await addVendorAction(formData);
     setLoading(false);
-    setIsModalOpen(false);
-    setFormCategory("Hardware & Electronics"); // Reset
+
+    if (res.error) {
+      setError(res.error);
+    } else {
+      setIsModalOpen(false);
+      setFormCategory("Hardware & Electronics"); // Reset
+      setError(null);
+    }
   };
 
   const filteredVendors = initialVendors.filter((vendor) => {
@@ -172,10 +179,14 @@ export function VendorClient({ initialVendors }: { initialVendors: Vendor[] }) {
       {/* Add Vendor Modal */}
       <Modal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        onClose={() => {
+          setIsModalOpen(false);
+          setError(null);
+        }} 
         title="Add New Vendor"
       >
         <form onSubmit={handleAddVendor} className="space-y-4">
+          {error && <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-md text-sm">{error}</div>}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Company Name</label>
             <input name="companyName" required className="w-full px-3 py-2 border rounded-md" />

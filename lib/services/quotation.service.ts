@@ -21,4 +21,15 @@ export class QuotationService {
   static async updateQuotationStatus(id: string, status: string) {
     return await db.quotation.update({ where: { id }, data: { status } });
   }
+
+  static async getPendingQuotations() {
+    return await db.quotation.findMany({
+      where: { status: 'Submitted' },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        rfq: true,
+        vendor: true,
+      }
+    });
+  }
 }

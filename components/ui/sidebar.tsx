@@ -34,7 +34,7 @@ export function Sidebar() {
       label: "Vendors",
       href: "/vendors",
       icon: Users,
-      show: true,
+      show: isStaff,
     },
     {
       label: "RFQs",
@@ -52,7 +52,7 @@ export function Sidebar() {
       label: "Approvals",
       href: "/approvals",
       icon: FolderLock,
-      show: true,
+      show: isStaff,
     },
     {
       label: "Purchase Orders",
@@ -76,7 +76,7 @@ export function Sidebar() {
       label: "Activity",
       href: "/activity",
       icon: History,
-      show: true,
+      show: isStaff,
     },
   ];
 

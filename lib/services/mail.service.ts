@@ -33,4 +33,20 @@ export class MailService {
       html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`,
     });
   }
+
+  static async sendRFQNotificationEmail(email: string, rfqTitle: string, rfqId: string) {
+    const rfqLink = `${domain}/rfqs/${rfqId}`;
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM,
+      to: email,
+      subject: `New Request for Quotation: ${rfqTitle}`,
+      html: `
+        <h2>You have been invited to participate in a new RFQ!</h2>
+        <p><strong>RFQ Title:</strong> ${rfqTitle}</p>
+        <p>Please log in to your VendorBridge portal to review the line items and submit your quotation before the deadline.</p>
+        <p><a href="${rfqLink}">Click here to view the RFQ</a></p>
+      `,
+    });
+  }
 }

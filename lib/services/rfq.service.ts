@@ -44,8 +44,40 @@ export class RFQService {
     });
   }
 
-  static async updateRFQ(id: string, data: Prisma.RFQUpdateInput) {
-    return await db.rFQ.update({ where: { id }, data });
+  static async getRFQsByVendor(vendorId: string) {
+    return await db.rFQ.findMany({
+      where: {
+        vendors: {
+          some: {
+            id: vendorId
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      include: { lineItems: true, vendors: true }
+    });
+  }
+
+  static async updateRFQ(id: string, data: any) {
+    const { lineItems, vendorIds, ...rfqData } = data;
+
+    return await db.rFQ.update({ 
+      where: { id }, 
+      data: {
+        ...rfqData,
+        lineItems: {
+          deleteMany: {}, // remove old
+          create: lineItems, // insert new
+        },
+        vendors: {
+          set: vendorIds.map((vid: string) => ({ id: vid })),
+        }
+      },
+      include: {
+        lineItems: true,
+        vendors: true,
+      }
+    });
   }
 
   static async closeRFQ(id: string) {
