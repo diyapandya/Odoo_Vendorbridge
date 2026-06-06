@@ -24,6 +24,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.role = (user as any).role;
         token.id = user.id;
+        token.picture = (user as any).image;
       }
       return token;
     },
@@ -31,6 +32,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         (session.user as any).role = token.role;
         (session.user as any).id = token.id;
+        session.user.image = token.picture as string || null;
       }
       return session;
     }

@@ -1,4 +1,4 @@
-/* "use server";
+"use server";
 
 import { AuthService } from "@/lib/services/auth.service";
 import { promises as fs } from "fs";
@@ -53,5 +53,4 @@ export const resetPasswordRequest = async (email: string) => {
 
 export const resetPassword = async (token: string, password: string) => {
   return await AuthService.resetPassword(token, password);
-};
-*/
+};
