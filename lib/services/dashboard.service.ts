@@ -73,7 +73,8 @@ export class DashboardService {
       return {
         isVendorSetupComplete: false,
         kpis: null,
-        recentRFQs: []
+        recentRFQs: [],
+        chartData: []
       };
     }
 
