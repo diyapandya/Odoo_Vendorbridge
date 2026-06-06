@@ -1,0 +1,42 @@
+import { v4 as uuidv4 } from 'uuid';
+import { db } from '@/lib/db';
+
+export class TokenService {
+  static async generateVerificationToken(email: string) {
+    const token = uuidv4();
+    const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour from now
+
+    const existingToken = await db.verificationToken.findFirst({
+      where: { email }
+    });
+
+    if (existingToken) {
+      await db.verificationToken.delete({
+        where: { id: existingToken.id }
+      });
+    }
+
+    return await db.verificationToken.create({
+      data: { email, token, expires }
+    });
+  }
+
+  static async generatePasswordResetToken(email: string) {
+    const token = uuidv4();
+    const expires = new Date(new Date().getTime() + 3600 * 1000); // 1 hour from now
+
+    const existingToken = await db.passwordResetToken.findFirst({
+      where: { email }
+    });
+
+    if (existingToken) {
+      await db.passwordResetToken.delete({
+        where: { id: existingToken.id }
+      });
+    }
+
+    return await db.passwordResetToken.create({
+      data: { email, token, expires }
+    });
+  }
+}
