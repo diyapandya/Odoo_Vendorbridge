@@ -21,4 +21,10 @@ export class VendorService {
   static async updateVendorStatus(id: string, status: string) {
     return await db.vendor.update({ where: { id }, data: { status } });
   }
+
+  static async getAllVendors() {
+    return await db.vendor.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  }
 }
